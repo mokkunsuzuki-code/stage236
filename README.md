@@ -1,151 +1,174 @@
-Stage221 – Independent Verification Kit
+# Stage222: Reproducible Security Claim Verification
 
-QSP Transparency System – Reproducible Verification
+## Overview
 
-Stage221 introduces an independent verification kit that allows third parties to reproduce and verify the transparency log and Merkle commitments.
+Stage222 introduces **reproducible security claim verification**.
 
-This stage moves the project from:
+Unlike typical open-source projects that only demonstrate that code runs or tests pass, this stage enables third parties to verify:
 
-Anyone can audit
-→
-Anyone can reproduce
+- what the security claims are
+- what evidence supports them
+- how those claims are cryptographically committed
+- and how to independently verify them
 
-The verification process rebuilds the transparency log, validates the Merkle tree, checks checkpoint history, and runs an external monitoring tool.
+---
 
-This approach aligns with the core principles of:
+## Core Concept
 
-Certificate Transparency
+Security is structured as:
 
-Supply Chain Transparency
+Security Claim  
+↓  
+Evidence  
+↓  
+Merkle Proof  
+↓  
+Verification  
+↓  
+Independent Verification  
 
-Reproducible Security Research
+This ensures that **security claims are not just stated, but verifiably grounded in evidence**.
 
-Overview
+---
 
-The transparency system records evidence artifacts and binds them to a Merkle commitment.
+## What This Stage Enables
 
-Artifacts include:
+Stage221:
+→ Reproducible system (run → verify)
 
-CI run evidence
+Stage222:
+→ Reproducible security claims (claim → evidence → proof → verify)
 
-security test logs
+This means:
 
-monitoring reports
+- Not just "it works"
+- But **"why it is correct can be independently verified"**
 
-These artifacts are committed to a Merkle tree, producing a verifiable root hash.
+---
 
-Checkpoint history ensures the log evolves in an append-only manner.
+## Project Structure
 
-Stage Evolution
-Stage	Feature
-Stage218	Transparency checkpoint generation
-Stage219	Checkpoint history (append-only log)
-Stage220	External transparency monitor
-Stage221	Independent verification kit
 
-Stage221 enables complete third-party verification.
+claims/
+claims.yaml
 
-Repository Structure
 tools/
- ├─ build_transparency_log.py
- ├─ verify_transparency_log.py
- ├─ external_monitor.py
- ├─ archive_checkpoint.py
- └─ verify_all.sh
+build_claim_bundle.py
+verify_claims.py
 
 out/
- ├─ transparency/
- │   ├─ transparency_log.json
- │   ├─ merkle_tree.json
- │   ├─ root.txt
- │   ├─ checkpoint.json
- │   ├─ history/
- │   │   └─ checkpoint_0001.json
- │   └─ inclusion_proofs/
- │
- ├─ ci/
- ├─ logs/
- └─ monitor/
-Independent Verification
+proofs/
+manifests/
+inclusion_proofs/
+merkle_tree.json
+root.txt
+claim_to_proof.json
 
-The full verification pipeline can be executed with a single command.
 
-./tools/verify_all.sh
+---
 
-This script performs the following steps:
+## How It Works
 
-Rebuild transparency log
+### 1. Define Claims
 
-Archive checkpoint to history
+All security claims are defined in:
 
-Verify Merkle tree integrity
 
-Verify checkpoint history
+claims/claims.yaml
 
-Run external monitor
 
-Example Output
-[1] rebuild transparency log
-[OK] wrote: out/transparency/transparency_log.json
+Each claim includes:
 
-[2] archive current checkpoint into history
-[OK] archived checkpoint: out/transparency/history/checkpoint_0001.json
+- ID
+- Statement
+- Evidence file paths
 
-[3] verify transparency log + Merkle tree + checkpoint history
-[OK] transparency log + Merkle tree verified
-[OK] checkpoint history verified
+---
 
-[4] run external monitor
-[OK] external monitor completed
+### 2. Build Claim Bundle
 
-[OK] independent verification completed
-Security Properties
-Integrity
 
-Evidence artifacts cannot be modified without changing the Merkle root.
+python3 tools/build_claim_bundle.py
 
-Transparency
 
-All entries are publicly auditable.
+This step:
 
-Append-Only History
+- hashes evidence files
+- generates claim manifests
+- builds a Merkle tree
+- creates inclusion proofs
 
-Checkpoint history ensures that previous states cannot be altered.
+---
 
-Independent Verification
+### 3. Verify Claims
 
-Anyone can reproduce the verification process using verify_all.sh.
 
-Research Significance
+python3 tools/verify_claims.py
 
-This stage demonstrates a reproducible transparency framework similar to modern transparency systems used in:
 
-certificate ecosystems
+This step:
 
-supply-chain security
+- recomputes evidence hashes
+- validates manifests
+- verifies Merkle inclusion proofs
+- confirms root consistency
 
-reproducible research infrastructure
+---
 
-The goal is to reduce ambiguity between:
+### 4. One Command Execution
 
-Security Claims
-↓
-Evidence Artifacts
-↓
-Merkle Commitments
-↓
-Independent Verification
-License
+
+./verify_all.sh
+
+
+---
+
+## Output
+
+
+out/proofs/
+
+
+Contains:
+
+- claim_to_proof.json → claim mapping
+- merkle_tree.json → full tree
+- root.txt → Merkle root
+- manifests/ → claim manifests
+- inclusion_proofs/ → proofs per claim
+
+---
+
+## Key Property
+
+This system guarantees:
+
+- Integrity: Evidence cannot be altered without detection
+- Transparency: All claims are auditable
+- Verifiability: Anyone can independently verify
+- Reproducibility: Results can be recomputed
+
+---
+
+## Why This Matters
+
+Typical OSS:
+→ Code runs
+
+Security OSS:
+→ Tests pass
+
+Stage222:
+→ **Security claims themselves are verifiable**
+
+This represents a shift toward:
+
+**reproducible and auditable security research**
+
+---
+
+## License
 
 MIT License
 
-Copyright (c) 2025 Motohiro Suzuki
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files, to deal in the Software without restriction.
-
-Author
-
-Motohiro Suzuki
-
-GitHub
-https://github.com/mokkunsuzuki-code
+EOF
