@@ -1,153 +1,151 @@
-# Stage220 – Transparency Monitor (External Verification)
+Stage221 – Independent Verification Kit
 
-This stage introduces **independent external verification** for the transparency system.
+QSP Transparency System – Reproducible Verification
 
-The project now provides a transparency log that can be **audited by third parties**, not only verified internally.
+Stage221 introduces an independent verification kit that allows third parties to reproduce and verify the transparency log and Merkle commitments.
 
----
+This stage moves the project from:
 
-# Transparency Architecture
+Anyone can audit
+→
+Anyone can reproduce
 
-The transparency system follows this structure:
+The verification process rebuilds the transparency log, validates the Merkle tree, checks checkpoint history, and runs an external monitoring tool.
 
-Evidence  
-↓  
-Merkle Tree  
-↓  
-Signed Checkpoint  
-↓  
-Checkpoint History  
-↓  
-Append-only Transparency Log  
-↓  
-External Transparency Monitor
+This approach aligns with the core principles of:
 
-This allows anyone to independently audit the log integrity.
+Certificate Transparency
 
----
+Supply Chain Transparency
 
-# What Stage220 Adds
+Reproducible Security Research
 
-Stage220 introduces a new tool:
+Overview
 
+The transparency system records evidence artifacts and binds them to a Merkle commitment.
 
-tools/external_monitor.py
+Artifacts include:
 
+CI run evidence
 
-This tool allows **third-party verification** of the transparency log.
+security test logs
 
-It verifies:
+monitoring reports
 
-- checkpoint history integrity  
-- Merkle root consistency  
-- append-only behavior of the transparency log  
-- consistency between `checkpoint.json`, `root.txt`, and checkpoint history  
+These artifacts are committed to a Merkle tree, producing a verifiable root hash.
 
-This represents an important step from **self-verification** to **independent verification**.
+Checkpoint history ensures the log evolves in an append-only manner.
 
----
+Stage Evolution
+Stage	Feature
+Stage218	Transparency checkpoint generation
+Stage219	Checkpoint history (append-only log)
+Stage220	External transparency monitor
+Stage221	Independent verification kit
 
-# Transparency Files
+Stage221 enables complete third-party verification.
 
-The transparency system generates the following artifacts.
+Repository Structure
+tools/
+ ├─ build_transparency_log.py
+ ├─ verify_transparency_log.py
+ ├─ external_monitor.py
+ ├─ archive_checkpoint.py
+ └─ verify_all.sh
 
+out/
+ ├─ transparency/
+ │   ├─ transparency_log.json
+ │   ├─ merkle_tree.json
+ │   ├─ root.txt
+ │   ├─ checkpoint.json
+ │   ├─ history/
+ │   │   └─ checkpoint_0001.json
+ │   └─ inclusion_proofs/
+ │
+ ├─ ci/
+ ├─ logs/
+ └─ monitor/
+Independent Verification
 
-out/transparency/
-├── transparency_log.json
-├── merkle_tree.json
-├── root.txt
-├── checkpoint.json
-├── checkpoint_index.json
-├── history/
-│ ├── checkpoint_0001.json
-│ ├── checkpoint_0002.json
-│ └── checkpoint_0003.json
-└── inclusion_proofs/
+The full verification pipeline can be executed with a single command.
 
+./tools/verify_all.sh
 
-These files together form an **append-only transparency log**.
+This script performs the following steps:
 
----
+Rebuild transparency log
 
-# External Transparency Monitor
+Archive checkpoint to history
 
-The external monitor verifies the transparency state from an independent perspective.
+Verify Merkle tree integrity
 
-Run the monitor:
+Verify checkpoint history
 
+Run external monitor
 
-python3 tools/external_monitor.py
+Example Output
+[1] rebuild transparency log
+[OK] wrote: out/transparency/transparency_log.json
 
+[2] archive current checkpoint into history
+[OK] archived checkpoint: out/transparency/history/checkpoint_0001.json
 
-Example output:
+[3] verify transparency log + Merkle tree + checkpoint history
+[OK] transparency log + Merkle tree verified
+[OK] checkpoint history verified
 
+[4] run external monitor
+[OK] external monitor completed
 
-[OK] wrote: out/monitor/monitor_report.json
-[OK] history files: 3
-[OK] external monitor passed
+[OK] independent verification completed
+Security Properties
+Integrity
 
+Evidence artifacts cannot be modified without changing the Merkle root.
 
-The generated report:
+Transparency
 
+All entries are publicly auditable.
 
-out/monitor/monitor_report.json
+Append-Only History
 
+Checkpoint history ensures that previous states cannot be altered.
 
-The report contains:
+Independent Verification
 
-- checkpoint history verification
-- Merkle root comparison
-- append-only checks
-- consistency validation
+Anyone can reproduce the verification process using verify_all.sh.
 
----
+Research Significance
 
-# Research Significance
+This stage demonstrates a reproducible transparency framework similar to modern transparency systems used in:
 
-Previous stages introduced transparency components:
+certificate ecosystems
 
-| Stage | Feature |
-|------|--------|
-| Stage218 | Transparency checkpoint |
-| Stage219 | Checkpoint history |
-| Stage220 | External verification monitor |
+supply-chain security
 
-Stage220 enables **independent auditability**, which is essential for credible transparency systems.
+reproducible research infrastructure
 
-The progression is:
+The goal is to reduce ambiguity between:
 
-Self verification  
-↓  
-Independent verification
-
----
-
-# Why External Monitoring Matters
-
-Without external verification, a system can only claim:
-
-> "The project verified its own logs."
-
-With Stage220, the project enables:
-
-**Anyone can audit the log.**
-
-This aligns with the core philosophy behind transparency systems used in:
-
-- Certificate Transparency
-- Software supply chain transparency
-- Reproducible security research
-
----
-
-# Repository
-
-GitHub:
-
-https://github.com/mokkunsuzuki-code/stage220
-
----
-
-# License
+Security Claims
+↓
+Evidence Artifacts
+↓
+Merkle Commitments
+↓
+Independent Verification
+License
 
 MIT License
+
+Copyright (c) 2025 Motohiro Suzuki
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files, to deal in the Software without restriction.
+
+Author
+
+Motohiro Suzuki
+
+GitHub
+https://github.com/mokkunsuzuki-code
