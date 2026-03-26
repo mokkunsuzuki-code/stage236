@@ -1,17 +1,19 @@
-# Stage232: Threshold Signature (2-of-3)
+# Stage233: External Signature Verification
 
 ## Overview
 
-This stage introduces **threshold-based signature verification**.
+This stage introduces **external signature verification**.
 
-Instead of requiring all signers, verification succeeds if a defined number of signatures are present.
+Signatures are no longer purely internal.
+They are now associated with **real-world identities**.
 
 Example:
 
-- 3 total signers
-- 2 required signatures
+- self (owner)
+- GitHub user
+- external researcher
 
-👉 This models **real-world distributed trust**
+👉 This connects the system to **real-world trust**
 
 ---
 
@@ -20,83 +22,90 @@ Example:
 Previous stage:
 
 
-Multi-Signer (Stage231)
-→ All signatures required
+Stage232: Threshold Signature
+→ Structure only (2-of-3)
 
 
 This stage:
 
 
-Threshold Signer (Stage232)
-→ Partial signatures allowed (e.g., 2-of-3)
+Stage233: External Signatures
+→ Real-world identities attached
 
 
 ---
 
 ## Why This Matters
 
-- Real systems rarely require unanimous agreement
-- Enables fault tolerance
-- Enables distributed authority
-- Foundation for real-world governance models
+- Moves from abstract model to real-world trust
+- Enables identity-based validation
+- Prepares for real cryptographic signatures
+- Foundation for external verification and collaboration
 
 ---
 
-## Threshold Policy
+## External Signers
 
 Defined in:
 
 
-threshold/config.yaml
+external_signatures/config.yaml
 
 
 Example:
 
 ```yaml
-threshold_policy:
-  required_signers: 2
-  total_signers: 3
+external_signers:
+  - id: self
+    type: local_key
+
+  - id: github_user
+    type: github_identity
+
+  - id: researcher
+    type: external_identity
 How It Works
 
 Verification logic:
 
-if provided_signatures >= required_signers:
-    PASS
-else:
-    FAIL
+Count valid signatures
+↓
+Check if threshold is met
+↓
+PASS / FAIL
 Run
-./tools/run_stage232_threshold.sh
+./tools/run_stage233_external.sh
 
 Expected output:
 
-[OK] Threshold satisfied
+[OK] External signatures verified
 Structure
-stage232/
-├── threshold/
+stage233/
+├── external_signatures/
 │   └── config.yaml
 ├── tools/
-│   ├── verify_threshold.py
-│   └── run_stage232_threshold.sh
+│   ├── verify_external_signatures.py
+│   └── run_stage233_external.sh
 Security Perspective
 
 This stage introduces:
 
-Partial trust acceptance
-Distributed verification
-Flexible security policies
+Identity-bound signatures
+External trust anchors
+Real-world validation model
 Limitations
-Signatures are currently simulated
+Signatures are simulated
 No cryptographic verification yet
-No identity binding
+No key management
 Next Stage
 
-Stage233:
+Stage234:
 
-👉 External Signatures
+👉 Real cryptographic signatures
 
-GitHub identity
-Real keys
-Researcher validation
+Ed25519
+GPG / GitHub verified signatures
+Actual key validation
 License
 
 MIT License
