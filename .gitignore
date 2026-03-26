@@ -12,3 +12,6 @@ keys/*.key
 # private keys
 keys/*_private.pem
 keys/*.key
+
+# stage230 generated bundle artifacts
+out/bundle/
